@@ -9,6 +9,18 @@ init()
 screen = display.set_mode((WIDTH, HEIGHT))
 clock = time.Clock()
 display.set_caption("Пінг-Понг")
+
+#--- ЗАВАНТАЖЕННЯ КРАТИНОК ---
+BG_IMG = image.load('Immages/forest.jpg')
+BG_IMG = transform.scale(BG_IMG, (800,600))
+Raketka1 = image.load('Immages/raketka1.jpg')
+Raketka1 = transform.scale(Raketka1, (40,100))
+Raketka2 = image.load('Immages/raketka.png')
+Raketka2 = transform.scale(Raketka2, (40,100))
+Myach = image.load('Immages/myach.jpg')
+Myach = transform.scale(Myach, (40,40))
+
+
 # ---СЕРВЕР ---
 def connect_to_server():
     while True:
@@ -54,6 +66,7 @@ while True:
     for e in event.get():
         if e.type == QUIT:
             exit()
+            window.blit(BG_IMG, (0,0))
 
     if "countdown" in game_state and game_state["countdown"] > 0:
         screen.fill((0, 0, 0))
@@ -88,10 +101,14 @@ while True:
         continue  # Блокує гру після перемоги
 
     if game_state:
-        screen.fill((30, 30, 30))
-        draw.rect(screen, (0, 255, 0), (20, game_state['paddles']['0'], 20, 100))
-        draw.rect(screen, (255, 0, 255), (WIDTH - 40, game_state['paddles']['1'], 20, 100))
-        draw.circle(screen, (255, 255, 255), (game_state['ball']['x'], game_state['ball']['y']), 10)
+        screen.blit(BG_IMG, (0,0))
+
+        screen.blit(Raketka1, (20, game_state['paddles']['0']))
+
+        screen.blit(Raketka2, (WIDTH - 40, game_state['paddles']['1']))
+
+        screen.blit(Myach, (game_state['ball']['x'] - 10, game_state['ball']['y'] - 10))
+
         score_text = font_main.render(f"{game_state['scores'][0]} : {game_state['scores'][1]}", True, (255, 255, 255))
         screen.blit(score_text, (WIDTH // 2 -25, 20))
 
