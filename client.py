@@ -6,6 +6,7 @@ from threading import Thread
 # ---ПУГАМЕ НАЛАШТУВАННЯ ---
 WIDTH, HEIGHT = 800, 600
 init()
+mixer.init()
 screen = display.set_mode((WIDTH, HEIGHT))
 clock = time.Clock()
 display.set_caption("Пінг-Понг")
@@ -55,6 +56,13 @@ font_main = font.Font(None, 36)
 # --- ЗОБРАЖЕННЯ ----
 
 # --- ЗВУКИ ---
+mixer.music.load("Sounds/background_music.ogg")
+wall_hit_sound = mixer.Sound("Sounds/wall_hit.waw")
+platform_hit_sound = mixer.Sound("Sounds/platform_hit.waw")
+win_sound = mixer.Sound("Sounds/win.waw")
+lose_sound = mixer.Sound("Sounds/lose.waw")
+
+mixer.music.set_volume(0.8)
 
 # --- ГРА ---
 game_over = False
@@ -62,6 +70,9 @@ winner = None
 you_winner = None
 my_id, game_state, buffer, client = connect_to_server()
 Thread(target=receive, daemon=True).start()
+
+mixer.music.play(-1)
+
 while True:
     for e in event.get():
         if e.type == QUIT:
@@ -79,10 +90,14 @@ while True:
         screen.fill((20, 20, 20))
 
         if you_winner is None:  # Встановлюємо тільки один раз
+            mixer.music.stop()
+
             if game_state["winner"] == my_id:
                 you_winner = True
+                win_sound.play()
             else:
                 you_winner = False
+                lose_sound.play()
 
         if you_winner:
             text = "Ти переміг!"
@@ -115,9 +130,11 @@ while True:
         if game_state['sound_event']:
             if game_state['sound_event'] == 'wall_hit':
                 # звук відбиття м'ячика від стін
+                wall_hit_sound.play()
                 pass
             if game_state['sound_event'] == 'platform_hit':
                 # звук відбиття м'ячика від платформи
+                platform_hit_sound.play()
                 pass
 
     else:
